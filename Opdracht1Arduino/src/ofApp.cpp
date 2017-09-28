@@ -8,9 +8,9 @@
 
 void ofApp::setup(){
 	gui.setup("Instellingen", "settings.xml");
-	gui.add(radius.set("Radius", 50, 10, 200));
-	gui.add(speedX.set("SpeedX", 5, 5, 30));
-	gui.add(speedY.set("SpeedY", 5, 5, 30));
+	gui.add(radius.set("Radius", 30, 10, 200));
+	gui.add(speedX.set("SpeedX", 10, 10, 30));
+	gui.add(speedY.set("SpeedY", 10, 10, 30));
 	gui.add(colour.set("Colour", ofColor::red));
 	
 	ofAddListener(arduino.EInitialized, this,&ofApp::setupArduino);

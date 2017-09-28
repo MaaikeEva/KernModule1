@@ -11,10 +11,10 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
-		
-		void keyPressed(int key);
 
 		void mousePressed(int x, int y, int button);
+
+		void keyPressed(int key);
 
 	private:
 		vector<Ball> balls;

@@ -12,7 +12,6 @@ public:
 
 	void draw();
 
-	// variables
 	float x;
 	float y;
 	float speedY;
