@@ -2,6 +2,8 @@
 
 #include "ofMain.h"
 #include "ofEvents.h"
+#include "Ball.h"
+#include "ofxGui.h"
 
 class ofApp : public ofBaseApp{
 
@@ -10,11 +12,19 @@ class ofApp : public ofBaseApp{
 		void update();
 		void draw();
 		
+		void keyPressed(int key);
+
 		void mousePressed(int x, int y, int button);
 
-		void mouseReleased(int x, int y, int button);
-
 	private:
+		vector<Ball> balls;
+
+		ofxPanel gui;
+		ofParameter<int> radius;
+		ofParameter<int> speedX;
+		ofParameter<int> speedY;
+		ofParameter<ofColor> colour;
+
 		ofArduino arduino;
 
 		void ofApp::setupArduino(const int& version);
@@ -23,4 +33,5 @@ class ofApp : public ofBaseApp{
 
 		void analogPinChanged(const int& pinNum);
 
+		void addBall();
 };

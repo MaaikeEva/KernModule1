@@ -7,26 +7,40 @@
 
 
 void ofApp::setup(){
+	gui.setup("Instellingen", "settings.xml");
+	gui.add(radius.set("Radius", 50, 10, 200));
+	gui.add(speedX.set("SpeedX", 5, 5, 30));
+	gui.add(speedY.set("SpeedY", 5, 5, 30));
+	gui.add(colour.set("Colour", ofColor::red));
+	
 	ofAddListener(arduino.EInitialized, this,&ofApp::setupArduino);
 
 	arduino.connect("COM 4");
 	arduino.sendFirmwareVersionRequest();
+
+	ofSetLogLevel(OF_LOG_NOTICE);
 }
 
 void ofApp::update(){
 	arduino.update();
+
+	for (unsigned int i = 0; i < balls.size(); i++) {
+		balls[i].update();
+	}
 }
 
 void ofApp::draw(){
+	gui.draw();
 
+	for (unsigned int i = 0; i < balls.size(); i++) {
+		balls[i].draw();
+	}
 }
 
 void ofApp::setupArduino(const int& version) {
-	ofLog() << "Arduino firmware found" << arduino.getFirmwareName()
-		<< arduino.getMajorFirmwareVersion()
-		<< arduino.getMinorFirmwareVersion() << endl;
+	ofLogNotice() << "Arduino initialized" << endl;
+	ofRemoveListener(arduino.EInitialized, this, &ofApp::setupArduino);
 
-	arduino.sendDigitalPinMode(PIN_LED, ARD_OUTPUT);
 	arduino.sendDigitalPinMode(PIN_BUTTON, ARD_INPUT);
 	arduino.sendAnalogPinReporting(PIN_LDR, ARD_ANALOG);
 	arduino.sendAnalogPinReporting(PIN_POTMETER, ARD_ANALOG);
@@ -37,17 +51,40 @@ void ofApp::setupArduino(const int& version) {
 }
 
 void ofApp::analogPinChanged(const int& pinNum) {
-	ofLogNotice() << "Analog Pin " << pinNum << " value: " << arduino.getAnalog(pinNum) << endl;
+	int value = arduino.getAnalog(pin);
+	ofLogVerbose() << "Analog pin" << pin << " changed to " << value << endl;
+	if (pin == PIN_POTMETER) {
+		radius = ofMap(value, 0, 1024, radius.getMin(), radius.getMax());
+	}
+	else if (pin == PIN_LDR) {
+		float colorHue = ofMap(value, 0, 1025, 0, 255);
+		ofLogVerbose() << "hue: " << colorHue << endl;
+		ofColor newColour = ofColor(colour.get());
+		newColour.setHue(colorHue);
+		colour = newColour;
+	}
 }
 
 void ofApp::digitalPinChanged(const int& pinNum) {
-	ofLogNotice() << "Digital Pin " << pinNum << " value: " << arduino.getDigital(pinNum) << endl;
+	int value = arduino.getDigital(pin);
+	ofLogVerbose() << "Digital pin" << pin << " changed to " << value << endl;
+	if (pin == PIN_BUTTON && value == 1) {
+		addBall();
+	}
 }
 
 void ofApp::mousePressed(int x, int y, int button) {
-	arduino.sendDigital(PIN_LED, ARD_HIGH);
+	if (balls.size() > 0) {
+		balls.pop_back();
+	}
 }
 
-void ofApp::mouseReleased(int x, int y, int button) {
-	arduino.sendDigital(PIN_LED, ARD_LOW);
+void ofApp::keyPressed(int key) {
+	addBall();
+}
+
+void ofApp::addBall() {
+	Ball newBall;
+	newBall.setup(speedX, speedY, radius, colour);
+	balls.push_back(newBall);
 }
