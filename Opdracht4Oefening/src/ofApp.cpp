@@ -4,7 +4,7 @@
 void ofApp::setup(){
 	gui.setup();
 	gui.add(drawGrid.set("Grid", false));
-	gui.add(useLight.set("Light", false));
+	gui.add(useLight.set("Light", true));
 
 	ofSetBackgroundColor(ofColor::black);
 
@@ -36,6 +36,9 @@ void ofApp::draw(){
 	ofSetColor(ofColor::green);
 	ofDrawSphere(0, 200, 0, 20);
 
+	ofSetColor(ofColor::red);
+	ofDrawSphere(0, 0, 200, 10);
+
 	if (drawGrid) ofDrawGrid(100);
 	if (useLight) {
 		ofEnableLighting();
@@ -48,6 +51,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+	if (key == 'l') useLight = !useLight;
+	if (key == 'g') drawGrid = !drawGrid;
+	if (key == ' ') drawGui = !drawGui;
 }
-

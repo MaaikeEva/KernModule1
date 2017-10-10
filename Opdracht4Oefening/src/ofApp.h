@@ -16,6 +16,7 @@ class ofApp : public ofBaseApp{
 
 		ofParameter <bool> drawGrid;
 		ofParameter <bool> useLight;
+		bool drawGui = true;
 
 		ofLight light;
 		ofEasyCam cam;
